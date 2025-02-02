@@ -1,0 +1,549 @@
+<div class="calendar-container">
+    <div class="calendar-header">
+        <div class="month-controls">
+            <button id="prev-month" disabled><</button>
+            <span id="current-month">Май 2023</span>
+            <button id="next-month">></button>
+        </div>
+        <div class="header-text" id="header-text">
+            Покупая экскурсии заранее, вы получаете уверенность и больше времени для отдыха
+        </div>
+        <div class="city-filters">
+            <label><input type="radio" name="city" value="phuket" checked> Пхукет</label>
+            <label><input type="radio" name="city" value="pattaya"> Паттайя</label>
+        </div>
+    </div>
+    <div class="weekdays">
+        <div>Пн</div>
+        <div>Вт</div>
+        <div>Ср</div>
+        <div>Чт</div>
+        <div>Пт</div>
+        <div>Сб</div>
+        <div>Вс</div>
+    </div>
+    <div class="calendar-grid" id="calendar-grid">
+        <!-- Дни календаря будут добавлены сюда через JavaScript -->
+    </div>
+</div>
+
+<div id="excursion-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="selected-date" id="selected-date">
+                <!-- Выбранная дата будет добавлена сюда -->
+            </div>
+            <div class="holiday-name" id="holiday-name">
+                <!-- Название праздника будет добавлено сюда -->
+            </div>
+            <div class="filters">
+                <label><input type="checkbox" name="filter" value="history"> История</label>
+                <label><input type="checkbox" name="filter" value="multi-day"> На несколько дней</label>
+                <label><input type="checkbox" name="filter" value="islands"> Острова</label>
+                <label><input type="checkbox" name="filter" value="adventures"> Приключения</label>
+                <label><input type="checkbox" name="filter" value="bangkok"> Бангкок</label>
+                <label><input type="checkbox" name="filter" value="nature"> Природа</label>
+                <label><input type="checkbox" name="filter" value="shows"> Шоу</label>
+            </div>
+        </div>
+        <div class="excursion-list" id="excursion-list">
+            <!-- Список экскурсий будет добавлен сюда -->
+        </div>
+    </div>
+</div>
+
+<style>
+        /* Основные стили для календаря */
+        .calendar-container {
+            width: 760px;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .month-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .month-controls button {
+            background: #ff6f61; /* Пастельный красный */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .month-controls button:hover {
+            background: #e65a50; /* Темнее пастельного красного */
+        }
+
+        .month-controls button:disabled {
+            background: #e0e0e0;
+            cursor: not-allowed;
+        }
+
+        .header-text {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 14px;
+            color: #1c1c1e;
+            line-height: 1.4;
+            padding: 0 10px;
+            user-select: none; /* Запрет выделения текста */
+        }
+
+        .city-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .city-filters label {
+            font-size: 14px;
+            color: #1c1c1e;
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Увеличили расстояние между радиокнопкой и текстом */
+            user-select: none;
+            padding: 8px 12px; /* Увеличили отступы */
+            background: #f5f5f7;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .city-filters label:hover {
+            background: #e0e0e0;
+        }
+
+        .city-filters input[type="radio"] {
+            width: 18px; /* Увеличили размер радиокнопки */
+            height: 18px;
+            accent-color: #ff6f61; /* Пастельный красный */
+            cursor: pointer;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-grid div {
+            padding: 12px;
+            text-align: center;
+            background: #f5f5f7; /* Светло-серый фон */
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #1c1c1e;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .calendar-grid div:hover {
+            background: #ff6f61; /* Пастельный красный при наведении */
+            color: white; /* Белый текст при наведении */
+            transform: translateY(-2px);
+        }
+
+        .calendar-grid div.disabled {
+            background: #f0f0f0;
+            color: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        .calendar-grid div.other-month {
+            background: #e0e0e0;
+            color: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        .calendar-grid div.today {
+            background: #ff6f61; /* Пастельный красный */
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 400px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            background: #ffffff;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .selected-date {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .filters label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #1c1c1e;
+            padding: 4px 8px;
+            background: #f5f5f7; /* Светло-серый фон */
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            user-select: none; /* Запрет выделения текста */
+        }
+
+        .filters label:hover {
+            background: #e0e0e0; /* Серый при наведении */
+        }
+
+        .filters input[type="checkbox"] {
+            margin: 0;
+            width: 14px;
+            height: 14px;
+            accent-color: #ff6f61; /* Пастельный красный */
+        }
+
+        .excursion-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            background: #f9f9f9; /* Светлый фон */
+        }
+
+        .excursion-list a {
+            display: block;
+            padding: 10px;
+            border-radius: 8px;
+            color: #1c1c1e;
+            text-decoration: none;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .excursion-list a:hover {
+            transform: translateY(-2px);
+            background: #ffccbc; /* Акцентный цвет при наведении */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .excursion-list a:nth-child(odd) {
+            background: #e3f2fd; /* Пастельный голубой */
+        }
+
+        .excursion-list a:nth-child(even) {
+            background: #fff3e0; /* Пастельный оранжевый */
+        }
+
+        .excursion-list a:last-child {
+            margin-bottom: 0;
+        }
+
+        .excursion-list a strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .excursion-list a span {
+            display: block;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .calendar-container {
+                width: 300px;
+                padding: 12px;
+            }
+
+            .calendar-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .header-text {
+                order: 3;
+                width: 100%;
+                font-size: 12px;
+            }
+
+            .city-filters {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .calendar-grid div {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 90%;
+            }
+        }
+
+        .holiday-icon {
+            color: #ff6f61; /* Пастельный красный */
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .holiday-name {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+    </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+    const calendarGrid = document.getElementById('calendar-grid');
+    const currentMonthElement = document.getElementById('current-month');
+    const prevMonthButton = document.getElementById('prev-month');
+    const nextMonthButton = document.getElementById('next-month');
+    const excursionModal = document.getElementById('excursion-modal');
+    const excursionList = document.getElementById('excursion-list');
+    const selectedDateElement = document.getElementById('selected-date');
+    const cityFilters = document.querySelectorAll('input[name="city"]');
+
+    let currentDate = new Date();
+    let excursionsData = [];
+    let selectedCity = 'phuket'; // Изначально выбран Пхукет
+    const spreadsheetId = '1xJAQYW9VQiGiGSdoUDVlN6fcKdRixoqSUoL72gfSN2c'; // Замените на ваш ID
+
+    // Загрузка данных экскурсий
+    async function fetchExcursions() {
+        try {
+            const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv`;
+            const response = await fetch(url);
+            const csvData = await response.text();
+            excursionsData = parseCSV(csvData);
+            console.log('Данные из Google Sheets:', excursionsData);
+        } catch (error) {
+            console.error('Ошибка при получении данных экскурсий:', error);
+        }
+    }
+
+    // Парсинг CSV-данных
+    function parseCSV(csvString) {
+        const rows = csvString.trim().split('\n');
+
+        if (rows.length <= 1) {
+            return [];
+        }
+        const parsedRows = rows.map(row => row.split(',').map(cell => {
+            // Убираем кавычки
+            return cell.replace(/^"|"$/g, '').trim();
+        }));
+        const header = parsedRows[0];
+        const data = parsedRows.slice(1)
+            .map(row => {
+                const obj = {};
+                for (let i = 0; i < header.length; i++) {
+                    obj[header[i]] = row[i];
+                }
+                return obj;
+            });
+        return data;
+    }
+
+    // Рендеринг календаря
+    function renderCalendar(date) {
+        calendarGrid.innerHTML = '';
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+
+        currentMonthElement.textContent = date.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+
+        // Добавление дней предыдущего месяца
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = (firstDay + 6) % 7; i > 0; i--) {
+            const dayElement = document.createElement('div');
+            dayElement.textContent = prevMonthLastDay - i + 1;
+            dayElement.classList.add('other-month');
+            calendarGrid.appendChild(dayElement);
+        }
+
+        // Добавление дней текущего месяца
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.textContent = day;
+
+            const currentDay = new Date(year, month, day);
+            if (currentDay < today) {
+                dayElement.classList.add('disabled');
+            } else if (
+                currentDay.getDate() === today.getDate() &&
+                currentDay.getMonth() === today.getMonth() &&
+                currentDay.getFullYear() === today.getFullYear()
+            ) {
+                dayElement.classList.add('today');
+            } else {
+                dayElement.addEventListener('click', () => openModal(day, month, year));
+            }
+
+            calendarGrid.appendChild(dayElement);
+        }
+
+        // Добавление дней следующего месяца
+        const totalCells = 42;
+        const remainingCells = totalCells - (firstDay + daysInMonth - ((firstDay + 6) % 7));
+        for (let i = 1; i <= remainingCells; i++) {
+            const dayElement = document.createElement('div');
+            dayElement.textContent = i;
+            dayElement.classList.add('other-month');
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+
+    // Открытие модального окна с экскурсиями
+    function openModal(day, month, year) {
+        const selectedDate = new Date(year, month, day);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        selectedDateElement.textContent = `Дата: ${selectedDate.toLocaleDateString('ru-RU', options)}`;
+
+        const excursions = getExcursionsForDate(selectedDate, selectedCity);
+        console.log('Экскурсии для выбранной даты:', excursions);
+        excursionList.innerHTML = excursions
+            .map(
+                (exc) =>
+                    `<a href="${exc.Link}" target="_blank">${exc.Title} - ${exc.Price} руб.</a>`
+            )
+            .join('');
+        excursionModal.style.display = 'flex';
+    }
+
+    // Фильтрация экскурсий по дате и городу
+    function getExcursionsForDate(date, city) {
+        const dayOfWeek = date.toLocaleString('ru-RU', { weekday: 'short' }).toLowerCase();
+        console.log(`Поиск экскурсий для дня недели: ${dayOfWeek} и города: ${city}`);
+
+        return excursionsData.filter(exc => {
+            // Проверка данных в столбце City
+            const excCities = exc.City ? exc.City.split(';').map(c => c.trim().toLowerCase()) : [];
+            console.log('Города для экскурсии:', excCities);
+
+            if (!excCities.includes(city)) {
+                console.log('Экскурсия не подходит по городу:', exc.Title);
+                return false;
+            }
+
+            // Проверка данных в столбце дня недели
+            const dayColumn = dayOfWeek === 'вс' ? 'Вс' : dayOfWeek === 'сб' ? 'Сб' : dayOfWeek === 'пт' ? 'Пт' : dayOfWeek === 'чт' ? 'Чт' : dayOfWeek === 'ср' ? 'Ср' : dayOfWeek === 'вт' ? 'Вт' : 'Пн';
+            const isAvailable = exc[dayColumn] === 'TRUE';
+            console.log(`Доступность экскурсии в ${dayColumn}:`, isAvailable);
+
+            if (!isAvailable) {
+                console.log('Экскурсия не подходит по дню недели:', exc.Title);
+                return false;
+            }
+
+            console.log('Экскурсия подходит:', exc.Title);
+            return true;
+        });
+    }
+
+    // Обработчики событий
+    prevMonthButton.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar(currentDate);
+        nextMonthButton.disabled = false;
+        if (currentDate.getMonth() === new Date().getMonth() && currentDate.getFullYear() === new Date().getFullYear()) {
+            prevMonthButton.disabled = true;
+        }
+    });
+
+    nextMonthButton.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar(currentDate);
+        prevMonthButton.disabled = false;
+    });
+
+    excursionModal.addEventListener('click', (e) => {
+        if (e.target === excursionModal) {
+            excursionModal.style.display = 'none';
+        }
+    });
+
+    // Обработчик изменения города
+    cityFilters.forEach(radio => {
+        radio.addEventListener('change', function () {
+            selectedCity = this.value;
+            console.log('Выбран город:', selectedCity);
+        });
+    });
+
+    // Инициализация
+    await fetchExcursions();
+    renderCalendar(currentDate);
+});
+</script>
