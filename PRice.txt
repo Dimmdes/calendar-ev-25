@@ -1,0 +1,202 @@
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var link = document.querySelector('.t-sociallinks__wrapper a[href="https://ezyvizit.com/calendar-excursii"]');
+    if (link) {
+        link.removeAttribute('target');
+    }
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Найти поле ввода внутри блока с ID #rec706240294
+    const searchInput = document.querySelector('#rec706240294 .t838__input');
+    if (!searchInput) return; // Если поле не найдено, остановить выполнение
+
+    // Массив фраз для анимации
+    const examples = [
+        "Экскурсия в Бангкок",
+        "Острова Пхи-Пхи",
+        "Река Квай",
+        "Дайвинг",
+        "Сингапур",
+        "Аюттайя",
+        "Персональная экскурсия",
+        "Сад специй",
+        "Шоу Тиффани"
+    ];
+    let exampleIndex = 0; // Текущая фраза
+    let charIndex = 0;    // Текущий символ в фразе
+    let isDeleting = false; // Флаг удаления текста
+
+    // Функция анимации текста
+    function typeEffect() {
+        const currentExample = examples[exampleIndex];
+        const displayedText = currentExample.substring(0, charIndex);
+
+        // Изменение placeholder
+        searchInput.placeholder = displayedText;
+
+        if (!isDeleting && charIndex < currentExample.length) {
+            charIndex++; // Печатаем символы
+        } else if (isDeleting && charIndex > 0) {
+            charIndex--; // Удаляем символы
+        } else if (!isDeleting && charIndex === currentExample.length) {
+            isDeleting = true; // Пауза перед удалением
+            setTimeout(typeEffect, 2000); // Задержка 2 секунды
+            return;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false; // Следующий пример
+            exampleIndex = (exampleIndex + 1) % examples.length;
+        }
+
+        setTimeout(typeEffect, isDeleting ? 50 : 100); // Скорость печати/удаления
+    }
+
+    typeEffect(); // Запуск анимации
+});
+</script>
+<style>
+/* Стилизация placeholder */
+#rec706240294 .t838__input::placeholder {
+    color: #7f79c6; /* Цвет текста placeholder */
+    transition: color 0.3s ease-in-out;
+}
+
+/* Убрать placeholder при фокусе */
+#rec706240294 .t838__input:focus::placeholder {
+    color: transparent;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchBlock = document.querySelector('.t838__wrapper');
+    if (searchBlock) {
+        const observer = new MutationObserver(() => {
+            searchBlock.querySelectorAll('a').forEach(link => {
+                link.setAttribute('target', '_self');
+            });
+        });
+
+        // Наблюдаем за изменениями в блоке поиска
+        observer.observe(searchBlock, { childList: true, subtree: true });
+    }
+});
+
+
+</script>
+
+<style>
+   #rec706240294 {
+        width: 100%;
+            background: #ffffff;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            z-index: 666;
+
+        }
+        
+.t-input {
+    height: 40px;
+}
+
+.t-submit {
+    height: 40px;
+}
+
+.t-site-search-dm {
+ border-radius: 5px;
+ border: 1px solid #ECECEC;
+}
+    @media screen and (max-width: 980px) {
+        #rec706240294 {
+           top: 65px; /* Устанавливаем отступ только при ширине экрана до 960px */
+        }
+    }    
+    </style>
+
+<style>
+    @media (max-width:639px){
+
+ /* T451m */
+ #allrecords .t-rec .t451m{
+  border-top-left-radius:30px;
+  border-bottom-left-radius:30px;
+ }
+ 
+ /* T451m  close button */
+ #allrecords .t-rec .t451m__close-button{
+  border-top-left-radius:30px;
+  border-bottom-left-radius:30px;
+  border-top-right-radius:0px;
+  border-bottom-right-radius:30px;
+ }
+ 
+ /* Sociallinks */
+ .t451m__rightside .t-sociallinks{
+  padding-left:32px;
+  transform:scale(1.42);
+
+ }
+ 
+}
+
+.t-sociallinks__item_whatsapp .t-sociallinks__svg path {
+    fill: #60D669 !important;
+}
+
+.t-sociallinks__item_telegram .t-sociallinks__svg path {
+    fill: #2AABEE !important;
+}
+
+.t-sociallinks__item_instagram .t-sociallinks__svg path {
+    fill: #E1306C;
+}
+
+.t-sociallinks__item_zen .t-sociallinks__svg path {
+    fill: #000000 !important;
+}
+
+
+/* Общие стили для элементов списка */
+.t451m__list_item .t-menu__link-item {
+  display: flex;
+  align-items: center;
+  padding-left: 0; /* Убираем лишний отступ для выравнивания */
+}
+
+/* Иконка слева и жирный текст для "Паттайя" */
+.t451m__list_item:nth-child(1) .t-menu__link-item {
+  font-weight: bold; /* Жирный текст */
+}
+
+.t451m__list_item:nth-child(1) .t-menu__link-item::before {
+  content: '';
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  background-image: url('https://static.tildacdn.com/tild3936-3930-4335-b862-316563346334/wide-beach-street-wi.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px; /* Отступ между иконкой и текстом */
+}
+
+/* Иконка слева и жирный текст для "Пхукет" */
+.t451m__list_item:nth-child(2) .t-menu__link-item {
+  font-weight: bold; /* Жирный текст */
+}
+
+.t451m__list_item:nth-child(2) .t-menu__link-item::before {
+  content: '';
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  background-image: url('https://static.tildacdn.com/tild3431-3536-4965-b830-656534663065/beach-with-sun-loung.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px; /* Отступ между иконкой и текстом */
+}
+
+</style>
